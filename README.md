@@ -6,6 +6,8 @@
 
 プロジェクト自体はintellijで管理しているのでintellijで起動すると必要ライブラリなどを自動でダウンロードしてきてくれます。  
 
+きっと[じょにお](https://twitter.com/joniojonijoni)がPython版を実装してくれるに違いない。
+
 # 使用環境
 - java8
 - intellij
