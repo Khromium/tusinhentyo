@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Twoshin:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Twoshin_jar</output-path>
+    <root id="archive" name="Twoshin.jar">
+      <element id="module-output" name="Twoshin" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jcommon-1.0.23.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/servlet-api-2.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
