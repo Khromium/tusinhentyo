@@ -35,21 +35,33 @@ public class Main extends JFrame {
         Main main = new Main();
         long start = System.currentTimeMillis();
 
-        List<CalcThread> calcThreads = new ArrayList<>();
-        for (int i = 0; i < SN_RANGE; i++){
-            calcThreads.add(new CalcThread(i));
-            calcThreads.get(i).start();
+        List<CalBPSK> calBPSKS = new ArrayList<>();
+        for (int i = 0; i < SN_RANGE; i++) {
+            calBPSKS.add(new CalBPSK(i));
+            calBPSKS.get(i).start();
         }
-        calcThreads.forEach(s -> {
+        calBPSKS.forEach(s -> {
             try {
                 s.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
+//        List<CalQPSK> calBPSKS = new ArrayList<>();
+//        for (int i = 0; i < SN_RANGE; i++) {
+//            calBPSKS.add(new CalQPSK(i));
+//            calBPSKS.get(i).start();
+//        }
+//        calBPSKS.forEach(s -> {
+//            try {
+//                s.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        });
 
-        List<Double> dataList=new ArrayList<>();
-        calcThreads.forEach(s->dataList.add(s.res));
+        List<Double> dataList = new ArrayList<>();
+        calBPSKS.forEach(s -> dataList.add(s.res));
 
         main.createChart(dataList);
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,40 +69,18 @@ public class Main extends JFrame {
         main.setTitle("にゃあ");
         main.setVisible(true);
         long end = System.currentTimeMillis();
-        System.out.println("time"+(end - start)  + "ms");
+        System.out.println("time" + (end - start) + "ms");
     }
 
-    public static class CalcThread extends Thread {
-        private double sn;
-        public double res;
-
-        public CalcThread(double sn) {
-            this.sn = sn;
-        }
-
-        public void run() {
-            int error = 0;
-            double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
-            for (int i = 0; i < BIT_NUM; i++) {
-                double noise = new Random().nextGaussian() * sigma;
-                double fukutyo = (SK + noise) * Math.cos(2 * Math.PI * FC * 0 + 0 * Math.PI);
-                if (fukutyo > 0) error++;
-                res = error / BIT_NUM;
-            }
-        }
-    }
 
     public void createChart(List<Double> value) {
 
-        JFreeChart freeChart = ChartFactory.createXYLineChart("", "σ", "nyaa", createData(value), PlotOrientation.VERTICAL, false, false, false);
-//        CategoryPlot plot = freeChart.getCategoryPlot();
-//        plot.setBackgroundPaint(Color.WHITE);
+        JFreeChart freeChart = ChartFactory.createXYLineChart("BER", "SNR [dB]", "nyaa", createData(value), PlotOrientation.VERTICAL, false, false, false);
         ChartPanel cpanel = new ChartPanel(freeChart);
         getContentPane().add(cpanel, BorderLayout.CENTER);
         setLogAxis(freeChart);
-
         try {
-            ChartUtilities.saveChartAsJPEG(new File("chart.jpg"),freeChart,500,500);
+            ChartUtilities.saveChartAsJPEG(new File("chart.jpg"), freeChart, 500, 500);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,7 +89,7 @@ public class Main extends JFrame {
     static void setLogAxis(JFreeChart chart) {
         LogAxis axis = new LogAxis("計算値");
         axis.setLabelFont(new Font("SansSerif", Font.PLAIN, 16));
-        axis.setRange(Math.pow(10,-7), Math.pow(10,0));
+        axis.setRange(Math.pow(10, -7), Math.pow(10, 0));
         chart.getXYPlot().setRangeAxis(axis);
         TickUnits tickUnits = new TickUnits();
         tickUnits.add(new NumberTickUnit(1));
@@ -110,8 +100,49 @@ public class Main extends JFrame {
     private static XYSeriesCollection createData(List<Double> value) {
         XYSeriesCollection trace = new XYSeriesCollection();
         XYSeries data = new XYSeries("nyaa");
-        for( int i=0;i<value.size();i++) data.add(i,value.get(i));
+        for (int i = 0; i < value.size(); i++) data.add(i, value.get(i));
         trace.addSeries(data);
         return trace;
+    }
+
+    public static class CalBPSK extends Thread {
+        private double sn;
+        public double res;
+
+        public CalBPSK(double sn) {
+            this.sn = sn;
+        }
+
+        public void run() {
+            int error = 0;
+            double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
+            for (int i = 0; i < BIT_NUM; i++) {
+                double noise = new Random().nextGaussian() * sigma;
+                double fukutyo1 = (SK + noise) * 1.0 / (1 + Math.cos(4 * Math.PI * FC * 0));
+                if (fukutyo1 > 0) error++;
+                res = error / BIT_NUM;
+            }
+        }
+    }
+
+    public static class CalQPSK extends Thread {
+        private double sn;
+        public double res;
+
+        public CalQPSK(double sn) {
+            this.sn = sn;
+        }
+
+        public void run() {
+            int error = 0;
+            double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
+            for (int i = 0; i < BIT_NUM; i++) {
+                double noise = new Random().nextGaussian() * sigma;
+                double fukutyo1 = (SK + noise) * Math.cos(2 * Math.PI * FC * 0 + 0 * Math.PI);
+//                System.out.println(fukutyo1+"\t"+fukutyo2);
+                if (fukutyo1 > 0) error++;
+                res = error / BIT_NUM;
+            }
+        }
     }
 }
