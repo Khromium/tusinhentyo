@@ -25,33 +25,36 @@ import java.util.List;
 public class Main extends JFrame {
     private static int SN_RANGE = 15;
     private static double BIT_NUM = Math.pow(10, 7);
-    private static int FS = 100;//sampling freq
     private static int FC = 50; //carrier freq
     private static double BPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1) * Math.PI);
-    private static double QPSK = Math.sqrt(2) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+    private static double QPSK = Math.sqrt(2) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);//sinも同じ
+    private static double QAM_COS = Math.sqrt(32) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
 
 
     public static void main(String[] args) {
         Main main = new Main();
         long start = System.currentTimeMillis();
+
 //
-        List<CalBPSK> calBPSKS = new ArrayList<>();
-        for (int i = 0; i < SN_RANGE; i++) {
-            calBPSKS.add(new CalBPSK(i));
-            calBPSKS.get(i).start();
-        }
-        calBPSKS.forEach(s -> {
-            try {
-                s.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+//        List<CalBPSK> calBPSKS = new ArrayList<>();
+//        for (int i = 0; i < SN_RANGE; i++) {
+//            calBPSKS.add(new CalBPSK(i));
+//            calBPSKS.get(i).start();
+//        }
+//        calBPSKS.forEach(s -> {
+//            try {
+//                s.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//
+//        List<Double> dataList = new ArrayList<>();
+//        calBPSKS.forEach(s -> dataList.add(s.res));
+//
+//        main.createChart(dataList, "bpsk");
 
-        List<Double> dataList = new ArrayList<>();
-        calBPSKS.forEach(s -> dataList.add(s.res));
 
-        main.createChart(dataList, "bpsk");
 //        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        main.setBounds(10, 10, 500, 500);
 //        main.setTitle("にゃあ");
@@ -59,15 +62,38 @@ public class Main extends JFrame {
         long end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
 
-//        //qpsk
+////        //qpsk
+//        start = System.currentTimeMillis();
+//
+//        List<CalQPSK> calQPSKS = new ArrayList<>();
+//        for (int i = 0; i < SN_RANGE; i++) {
+//            calQPSKS.add(new CalQPSK(i));
+//            calQPSKS.get(i).start();
+//        }
+//        calQPSKS.forEach(s -> {
+//            try {
+//                s.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//
+//        List<Double> dataLists = new ArrayList<>();
+//        calQPSKS.forEach(s -> dataLists.add(s.res));
+//
+//        main.createChart(dataLists, "qpsk");
+//        end = System.currentTimeMillis();
+//        System.out.println("time" + (end - start) + "ms");
+
+        //16qam
         start = System.currentTimeMillis();
 
-        List<CalQPSK> calQPSKS = new ArrayList<>();
+        List<CalQAM> CalQAM = new ArrayList<>();
         for (int i = 0; i < SN_RANGE; i++) {
-            calQPSKS.add(new CalQPSK(i));
-            calQPSKS.get(i).start();
+            CalQAM.add(new CalQAM(i));
+            CalQAM.get(i).start();
         }
-        calQPSKS.forEach(s -> {
+        CalQAM.forEach(s -> {
             try {
                 s.join();
             } catch (InterruptedException e) {
@@ -75,14 +101,15 @@ public class Main extends JFrame {
             }
         });
 
-        List<Double> dataLists = new ArrayList<>();
-        calQPSKS.forEach(s -> dataLists.add(s.res));
+        List<Double> dataLists1 = new ArrayList<>();
+        CalQAM.forEach(s -> dataLists1.add(s.res));
 
-        main.createChart(dataLists, "qpsk");
-//        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        main.setBounds(10, 10, 500, 500);
-//        main.setTitle("にゃあ");
-//        main.setVisible(true);
+        main.createChart(dataLists1, "16qam");
+
+        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        main.setBounds(10, 10, 500, 500);
+        main.setTitle("にゃあ");
+        main.setVisible(true);
         end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
     }
@@ -153,9 +180,32 @@ public class Main extends JFrame {
             for (int i = 0; i < BIT_NUM; i++) {
                 double noise = new Random().nextGaussian() * sigma;
                 double fukutyo1 = (QPSK + noise) * Math.cos(2 * Math.PI * FC * 0);
+                noise = new Random().nextGaussian() * sigma;
                 double fukutyo2 = (QPSK + noise) * Math.sin(2 * Math.PI * FC * 0);
-//                System.out.println(fukutyo1+"\t"+fukutyo2);
                 if (fukutyo1 < 0 || fukutyo2 < 0) error++;
+                res = error / BIT_NUM;
+            }
+        }
+    }
+
+    public static class CalQAM extends Thread {
+        private double sn;
+        public double res;
+
+        public CalQAM(double sn) {
+            this.sn = sn;
+        }
+
+        public void run() {
+            int error = 0;
+            double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
+            for (int i = 0; i < BIT_NUM; i++) {
+                double noise = new Random().nextGaussian() * sigma;
+                double fukutyo1 = (QAM_COS + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+                noise = new Random().nextGaussian() * sigma;
+                double fukutyo2 = (QAM_COS + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+//                System.out.println(fukutyo1 + "," + fukutyo2);
+                if (fukutyo1 < 2 || fukutyo2 < 2 || fukutyo1 > 4 || fukutyo2 > 4) error++;
                 res = error / BIT_NUM;
             }
         }
