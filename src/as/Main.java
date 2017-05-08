@@ -104,6 +104,11 @@ public class Main extends JFrame {
     }
 
 
+    /**
+     * グラフ作成して画像を保存します。
+     * @param value 計算データ
+     * @param name グラフ名
+     */
     public void createChart(List<Double> value, String name) {
         JFreeChart freeChart = ChartFactory.createXYLineChart(name, "SNR [dB]", "nyaa", createData(value), PlotOrientation.VERTICAL, false, false, false);
         ChartPanel cpanel = new ChartPanel(freeChart);
@@ -116,6 +121,10 @@ public class Main extends JFrame {
         }
     }
 
+    /**
+     * 対数軸を設定します。
+     * @param chart
+     */
     static void setLogAxis(JFreeChart chart) {
         LogAxis axis = new LogAxis("BER");
         axis.setLabelFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -127,6 +136,11 @@ public class Main extends JFrame {
         chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(true);
     }
 
+    /**
+     * グラフに設置するためのデータ生成
+     * @param value
+     * @return
+     */
     private static XYSeriesCollection createData(List<Double> value) {
         XYSeriesCollection trace = new XYSeriesCollection();
         XYSeries data = new XYSeries("nyaa");
@@ -135,6 +149,9 @@ public class Main extends JFrame {
         return trace;
     }
 
+    /**
+     * BPSKの計算
+     */
     public static class CalBPSK extends Thread {
         private double sn;
         public double res;
@@ -155,6 +172,9 @@ public class Main extends JFrame {
         }
     }
 
+    /**
+     * QPSKの計算
+     */
     public static class CalQPSK extends Thread {
         private double sn;
         public double res;
@@ -177,6 +197,9 @@ public class Main extends JFrame {
         }
     }
 
+    /**
+     * 16QAMの計算
+     */
     public static class CalQAM extends Thread {
         private double sn;
         public double res;
