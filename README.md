@@ -8,6 +8,13 @@
 
 きっと[じょにお](https://twitter.com/joniojonijoni)がPython版を実装してくれるに違いない。
 
+# 進捗
+|変調|進捗|
+|---|---|
+bpsk|ぴらがやってくれた
+qpsk|たぶん出来た
+16qam|知らね
+
 # 使用環境
 - java8
 - intellij
