@@ -24,12 +24,11 @@ import java.util.List;
  */
 public class Main extends JFrame {
     private static int SN_RANGE = 18;
-    //    private static double BIT_NUM = Math.pow(10, 7);
     private static double BIT_NUM = Math.pow(10, 7);
     private static int FC = 50; //carrier freq
     private static double BPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1) * Math.PI);
-    private static double QPSK = Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
-    private static double QAM = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI) + 1 * Math.sin(2 * Math.PI * FC * 0 +(1 / 4.0)* Math.PI) ;
+    private static double QPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+    private static double QAM = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI) + 1 * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
 
 
     public static void main(String[] args) {
@@ -54,12 +53,6 @@ public class Main extends JFrame {
         calBPSKS.forEach(s -> dataList.add(s.res));
 
         main.createChart(dataList, "BPSK");
-
-
-//        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        main.setBounds(10, 10, 500, 500);
-//        main.setTitle("にゃあ");
-//        main.setVisible(true);
         long end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
 
@@ -106,11 +99,6 @@ public class Main extends JFrame {
         CalQAM.forEach(s -> dataLists1.add(s.res));
 
         main.createChart(dataLists1, "16QAM");
-
-//        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        main.setBounds(10, 10, 500, 500);
-//        main.setTitle("にゃあ");
-//        main.setVisible(true);
         end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
     }
@@ -183,7 +171,6 @@ public class Main extends JFrame {
                 double fukutyo1 = (QPSK + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
                 noise = new Random().nextGaussian() * sigma;
                 double fukutyo2 = (QPSK + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
-//                System.out.println(fukutyo2);
                 if (fukutyo1 < 0 || fukutyo2 < 0) error++;
                 res = error / BIT_NUM;
             }
@@ -206,7 +193,6 @@ public class Main extends JFrame {
                 double fukutyo1 = (QAM + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
                 noise = new Random().nextGaussian() * sigma;
                 double fukutyo2 = (QAM + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
-//                System.out.println(fukutyo1 + "," + fukutyo2);
                 if (fukutyo1 < 2 / 3.0 || fukutyo2 < 2 / 3.0) error++;
                 res = error / BIT_NUM;
             }
