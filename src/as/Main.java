@@ -24,35 +24,36 @@ import java.util.List;
  */
 public class Main extends JFrame {
     private static int SN_RANGE = 18;
+    //    private static double BIT_NUM = Math.pow(10, 7);
     private static double BIT_NUM = Math.pow(10, 7);
     private static int FC = 50; //carrier freq
     private static double BPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1) * Math.PI);
-    private static double QPSK = Math.cos(2 * Math.PI * FC * 1 + (1 / 4.0) * Math.PI);
-    private static double QAM_COS = Math.sqrt(32) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+    private static double QPSK = Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+    private static double QAM = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI) + 1 * Math.sin(2 * Math.PI * FC * 0 +(1 / 4.0)* Math.PI) ;
 
 
     public static void main(String[] args) {
         Main main = new Main();
         long start = System.currentTimeMillis();
 
-//
-//        List<CalBPSK> calBPSKS = new ArrayList<>();
-//        for (int i = 0; i < SN_RANGE; i++) {
-//            calBPSKS.add(new CalBPSK(i));
-//            calBPSKS.get(i).start();
-//        }
-//        calBPSKS.forEach(s -> {
-//            try {
-//                s.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//        List<Double> dataList = new ArrayList<>();
-//        calBPSKS.forEach(s -> dataList.add(s.res));
-//
-//        main.createChart(dataList, "bpsk");
+
+        List<CalBPSK> calBPSKS = new ArrayList<>();
+        for (int i = 0; i < SN_RANGE; i++) {
+            calBPSKS.add(new CalBPSK(i));
+            calBPSKS.get(i).start();
+        }
+        calBPSKS.forEach(s -> {
+            try {
+                s.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        List<Double> dataList = new ArrayList<>();
+        calBPSKS.forEach(s -> dataList.add(s.res));
+
+        main.createChart(dataList, "BPSK");
 
 
 //        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +61,7 @@ public class Main extends JFrame {
 //        main.setTitle("にゃあ");
 //        main.setVisible(true);
         long end = System.currentTimeMillis();
-//        System.out.println("time" + (end - start) + "ms");
+        System.out.println("time" + (end - start) + "ms");
 
 ////        //qpsk
         start = System.currentTimeMillis();
@@ -81,37 +82,37 @@ public class Main extends JFrame {
         List<Double> dataLists = new ArrayList<>();
         calQPSKS.forEach(s -> dataLists.add(s.res));
 
-        main.createChart(dataLists, "qpsk");
+        main.createChart(dataLists, "QPSK");
         end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
 
 //        //16qam
-//        start = System.currentTimeMillis();
-//
-//        List<CalQAM> CalQAM = new ArrayList<>();
-//        for (int i = 0; i < SN_RANGE; i++) {
-//            CalQAM.add(new CalQAM(i));
-//            CalQAM.get(i).start();
-//        }
-//        CalQAM.forEach(s -> {
-//            try {
-//                s.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//        List<Double> dataLists1 = new ArrayList<>();
-//        CalQAM.forEach(s -> dataLists1.add(s.res));
-//
-//        main.createChart(dataLists1, "16qam");
-//
+        start = System.currentTimeMillis();
+
+        List<CalQAM> CalQAM = new ArrayList<>();
+        for (int i = 0; i < SN_RANGE; i++) {
+            CalQAM.add(new CalQAM(i));
+            CalQAM.get(i).start();
+        }
+        CalQAM.forEach(s -> {
+            try {
+                s.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        List<Double> dataLists1 = new ArrayList<>();
+        CalQAM.forEach(s -> dataLists1.add(s.res));
+
+        main.createChart(dataLists1, "16QAM");
+
 //        main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        main.setBounds(10, 10, 500, 500);
 //        main.setTitle("にゃあ");
 //        main.setVisible(true);
-//        end = System.currentTimeMillis();
-//        System.out.println("time" + (end - start) + "ms");
+        end = System.currentTimeMillis();
+        System.out.println("time" + (end - start) + "ms");
     }
 
 
@@ -179,9 +180,10 @@ public class Main extends JFrame {
             double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
             for (int i = 0; i < BIT_NUM; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double fukutyo1 = (QPSK + noise) * Math.sqrt(2) * Math.cos(2 * Math.PI * FC * 1);
+                double fukutyo1 = (QPSK + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
                 noise = new Random().nextGaussian() * sigma;
-                double fukutyo2 = (QPSK + noise) * Math.sqrt(2) * Math.sin(2 * Math.PI * FC * 1);
+                double fukutyo2 = (QPSK + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+//                System.out.println(fukutyo2);
                 if (fukutyo1 < 0 || fukutyo2 < 0) error++;
                 res = error / BIT_NUM;
             }
@@ -201,11 +203,11 @@ public class Main extends JFrame {
             double sigma = Math.sqrt(Math.pow(10, -(1.0 / 10) * sn));
             for (int i = 0; i < BIT_NUM; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double fukutyo1 = (QAM_COS + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+                double fukutyo1 = (QAM + noise) * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
                 noise = new Random().nextGaussian() * sigma;
-                double fukutyo2 = (QAM_COS + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
+                double fukutyo2 = (QAM + noise) * Math.sin(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);
 //                System.out.println(fukutyo1 + "," + fukutyo2);
-                if (fukutyo1 < 2 || fukutyo2 < 2 || fukutyo1 > 4 || fukutyo2 > 4) error++;
+                if (fukutyo1 < 2 / 3.0 || fukutyo2 < 2 / 3.0) error++;
                 res = error / BIT_NUM;
             }
         }
