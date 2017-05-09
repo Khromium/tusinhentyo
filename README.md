@@ -22,8 +22,8 @@ qpsk|出来た
 
 # 実行結果
 ![bpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/BPSK2.jpg)
-![qpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/QPSK.jpg)
-![16qam](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/16QAM.jpg)
+![qpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/QPSK2.jpg)
+![16qam](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/16QAM2.jpg)
 
 # 使用環境
 - java8
