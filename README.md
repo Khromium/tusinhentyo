@@ -1,4 +1,4 @@
-# tusinhentyo
+2# tusinhentyo
 まだ作成中です！  
 参考にする際は注意してください  
 通信専攻科課題の変調をする課題作っています。  
@@ -21,9 +21,9 @@ qpsk|出来た
 16qam|よくわからんがそれっぽい
 
 # 実行結果
-![bpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/bpsk.jpg)
-![qpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/qpsk.jpg)
-![16qam](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/16qam.jpg)
+![bpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/BPSK2.jpg)
+![qpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/QPSK2.jpg)
+![16qam](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/16QAM2.jpg)
 
 # 使用環境
 - java8
