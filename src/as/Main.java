@@ -8,8 +8,10 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleEdge;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +30,7 @@ public class Main extends JFrame {
     private static int FC = 50; //carrier freq
     private static double BPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1) * Math.PI);//r=1
     private static double QPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);//r=1,象限で区切るためにπ/4だけずらしている。
+
     /**
      * グラフ上で1がr=1となるように
      *        Q
@@ -43,7 +46,6 @@ public class Main extends JFrame {
      *  時間を進めないとsinが0になるので、1/4だけtを進める
      *  参考: http://get-mobilebb.com/v001s010c026h0002r001.html
      */
-
     public static void main(String[] args) {
         Main main = new Main();
         long start = System.currentTimeMillis();
@@ -64,7 +66,6 @@ public class Main extends JFrame {
         List<Double> dataList = new ArrayList<>();
         calBPSKS.forEach(s -> dataList.add(s.res));
 
-        main.createChart(dataList, "BPSK");
         long end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
 
@@ -87,7 +88,6 @@ public class Main extends JFrame {
         List<Double> dataLists = new ArrayList<>();
         calQPSKS.forEach(s -> dataLists.add(s.res));
 
-        main.createChart(dataLists, "QPSK");
         end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
 
@@ -110,25 +110,33 @@ public class Main extends JFrame {
         List<Double> dataLists1 = new ArrayList<>();
         CalQAM.forEach(s -> dataLists1.add(s.res));
 
-        main.createChart(dataLists1, "16QAM");
         end = System.currentTimeMillis();
         System.out.println("time" + (end - start) + "ms");
+        main.createChart("通信課題", main.createGraphData("BPSK", dataList), main.createGraphData("QPSK", dataLists), main.createGraphData("16QAM", dataLists1));
+
+
     }
 
 
     /**
-     * グラフ作成して画像を保存します。
-     *
-     * @param value 計算データ
-     * @param name  グラフ名
+     * @param chartName
+     * @param value
      */
-    public void createChart(List<Double> value, String name) {
-        JFreeChart freeChart = ChartFactory.createXYLineChart(name, "SNR [dB](=^・^=)", "nyaa", createData(value), PlotOrientation.VERTICAL, false, false, false);
+    public void createChart(String chartName, XYSeries... value) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (XYSeries xySeries : value)
+            xySeriesCollection.addSeries(xySeries);
+
+        JFreeChart freeChart = ChartFactory.createXYLineChart(chartName, "SNR [dB]", "nyaa", xySeriesCollection, PlotOrientation.VERTICAL, false, false, false);
+        LegendTitle legend = new LegendTitle(freeChart.getPlot());
+
+        legend.setPosition(RectangleEdge.BOTTOM);
+        freeChart.addLegend(legend);
         ChartPanel cpanel = new ChartPanel(freeChart);
         getContentPane().add(cpanel, BorderLayout.CENTER);
         setLogAxis(freeChart);
         try {
-            ChartUtilities.saveChartAsJPEG(new File(name + ".jpg"), freeChart, 500, 500);
+            ChartUtilities.saveChartAsJPEG(new File(chartName + ".jpg"), freeChart, 800, 800);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,27 +149,34 @@ public class Main extends JFrame {
      */
     static void setLogAxis(JFreeChart chart) {
         LogAxis axis = new LogAxis("BER");
-        axis.setLabelFont(new Font("SansSerif", Font.PLAIN, 16));
+        axis.setLabelFont(new Font("SansSerif", Font.PLAIN, 22));
         axis.setRange(Math.pow(10, -7), Math.pow(10, 0));
         chart.getXYPlot().setRangeAxis(axis);
         TickUnits tickUnits = new TickUnits();
-        tickUnits.add(new NumberTickUnit(1));
+        tickUnits.add(new NumberTickUnit(2));
+//        chart.setBackgroundPaint(new Color(0,250,250));
+        chart.getXYPlot().setRangeGridlinePaint(new Color(11, 11, 11));
+        chart.getXYPlot().setDomainGridlinePaint(new Color(111, 111, 111));
+
+        chart.getPlot().setBackgroundPaint(new Color(250, 250, 250));
+        chart.getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(4.0f));
+        chart.getXYPlot().getRenderer().setSeriesStroke(1, new BasicStroke(4.0f));
+        chart.getXYPlot().getRenderer().setSeriesStroke(2, new BasicStroke(4.0f));
         chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(true);
         chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(true);
+        chart.getXYPlot().getDomainAxis().setLabelFont(new Font("SansSerif", Font.PLAIN, 20));
+        chart.getXYPlot().getRangeAxis().setLabelFont(new Font("SansSerif", Font.PLAIN, 20));
+        chart.getXYPlot().getRangeAxis().setTickLabelFont(new Font("SansSerif", Font.PLAIN, 16));
+        chart.getXYPlot().getDomainAxis().setTickLabelFont(new Font("SansSerif", Font.PLAIN, 16));
     }
 
     /**
      * グラフに設置するためのデータ生成
-     *
-     * @param value
-     * @return
      */
-    private static XYSeriesCollection createData(List<Double> value) {
-        XYSeriesCollection trace = new XYSeriesCollection();
-        XYSeries data = new XYSeries("nyaa");
+    private static XYSeries createGraphData(String name, List<Double> value) {
+        XYSeries data = new XYSeries(name);
         for (int i = 0; i < value.size(); i++) data.add(i, value.get(i));
-        trace.addSeries(data);
-        return trace;
+        return data;
     }
 
     /**
@@ -219,6 +234,7 @@ public class Main extends JFrame {
     public static class CalQAM extends Thread {
         private double sn;
         public double res;
+
         public CalQAM(double sn) {
             this.sn = sn;
         }
@@ -230,9 +246,9 @@ public class Main extends JFrame {
             //I:x軸、Q:Y軸 16の内4つ 4/16 = 1/4
             for (int i = 0; i < BIT_NUM / 4; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I = (1/Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
+                double I = (1 / Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
                 noise = new Random().nextGaussian() * sigma;
-                double Q = (1/Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
+                double Q = (1 / Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
                 //Iの誤り
                 if ((0 <= I && I < 2 / (3 * Math.sqrt(2))) || I < -2 / (3 * Math.sqrt(2))) corner += 1;//1ビット誤り
                 if (0 > I && I > -2 / (3 * Math.sqrt(2))) corner += 2;//2ビット誤り
@@ -247,9 +263,9 @@ public class Main extends JFrame {
             //I:x軸、Q:Y軸 16の内4つ 4/16 = 1/4
             for (int i = 0; i < BIT_NUM / 4; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I = 1/(3*Math.sqrt(2))+noise;//2nπ以外にしないと復調がうまくいかない
+                double I = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
                 noise = new Random().nextGaussian() * sigma;
-                double Q =  1/(3*Math.sqrt(2))+noise;//2nπ以外にしないと復調がうまくいかない
+                double Q = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
                 //Iの誤り
                 if ((0 > I && I < -2 / (3 * Math.sqrt(2))) || I > 2 / (3 * Math.sqrt(2))) center += 1;//1ビット誤り
                 if (I <= -2 / (3 * Math.sqrt(2))) center += 2;//2ビット誤り
@@ -263,9 +279,9 @@ public class Main extends JFrame {
             //I:x軸、Q:Y軸 16の内4つ 8/16 = 1/2
             for (int i = 0; i < BIT_NUM / 2; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I =  1/(3*Math.sqrt(2))+noise;//2nπ以外にしないと復調がうまくいかない
+                double I = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
                 noise = new Random().nextGaussian() * sigma;
-                double Q =  1/(Math.sqrt(2))+noise;//2nπ以外にしないと復調がうまくいかない
+                double Q = 1 / (Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
                 //Iの誤り
                 if ((0 > I && I < -2 / (3 * Math.sqrt(2))) || I > 2 / (3 * Math.sqrt(2))) edge += 1;//1ビット誤り
                 if (I <= -2 / (3 * Math.sqrt(2))) edge += 2;//2ビット誤り
