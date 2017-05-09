@@ -2,15 +2,10 @@
 まだ作成中です！  
 参考にする際は注意してください  
 通信専攻科課題の変調をする課題作っています。  
-依存関係を減らすためにjavaで書いています。pythonは暇があったら入れるかも。  
+依存関係を減らすためにjavaで書いています。
 
 プロジェクト自体はintellijで管理しているのでintellijで起動すると必要ライブラリなどを自動でダウンロードしてきてくれます。  
 
-
-# Python版との違い
-- 振幅を1に統一
-- 信号空間ダイヤグラムをwikipedia準拠（隣り合う符号は1ビットの差になる分布)
-- マルチスレッド化で実行時間が数分の一に短縮
 
 # 実行ファイル
 [こちら](https://github.com/Khromium/tusinhentyo/releases/)にあります
@@ -18,9 +13,9 @@
 # 進捗
 |変調|進捗|
 |---|---|
-bpsk|ぴらがやってくれた
-qpsk|出来た
-16qam|よくわからんがそれっぽい
+bpsk|○
+qpsk|○
+16qam|？
 
 # 実行結果
 ![bpsk](https://raw.githubusercontent.com/Khromium/tusinhentyo/master/res/BPSK2.jpg)
