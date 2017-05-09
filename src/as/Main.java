@@ -50,8 +50,9 @@ public class Main extends JFrame {
         Main main = new Main();
         long start = System.currentTimeMillis();
 
+        //bpsk
         List<CalBPSK> calBPSKS = new ArrayList<>();
-        for (int i = 0; i < SN_RANGE; i++) {
+        for (int i = 0; i < SN_RANGE - 10; i++) {
             calBPSKS.add(new CalBPSK(i));
             calBPSKS.get(i).start();
         }
@@ -73,7 +74,7 @@ public class Main extends JFrame {
         start = System.currentTimeMillis();
 
         List<CalQPSK> calQPSKS = new ArrayList<>();
-        for (int i = 0; i < SN_RANGE; i++) {
+        for (int i = 0; i < SN_RANGE - 7; i++) {
             calQPSKS.add(new CalQPSK(i));
             calQPSKS.get(i).start();
         }
@@ -246,9 +247,9 @@ public class Main extends JFrame {
             //I:x軸、Q:Y軸 16の内4つ 4/16 = 1/4
             for (int i = 0; i < BIT_NUM / 4; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I = (1 / Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
+                double I = 1 / Math.sqrt(2) + noise;
                 noise = new Random().nextGaussian() * sigma;
-                double Q = (1 / Math.sqrt(2) + noise);//2nπ以外にしないと復調がうまくいかない
+                double Q = 1 / Math.sqrt(2) + noise;
                 //Iの誤り
                 if ((0 <= I && I < 2 / (3 * Math.sqrt(2))) || I < -2 / (3 * Math.sqrt(2))) corner += 1;//1ビット誤り
                 if (0 > I && I > -2 / (3 * Math.sqrt(2))) corner += 2;//2ビット誤り
@@ -257,15 +258,14 @@ public class Main extends JFrame {
                 if (0 > Q && Q > -2 / (3 * Math.sqrt(2))) corner += 2;//2ビット誤り
 //                res = error / BIT_NUM;
             }
-//            System.out.println("bitnum"+BIT_NUM/4+"¥ncorner:"+corner);
 
             //中心 ex.1101
             //I:x軸、Q:Y軸 16の内4つ 4/16 = 1/4
             for (int i = 0; i < BIT_NUM / 4; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
+                double I = 1 / (3 * Math.sqrt(2)) + noise;
                 noise = new Random().nextGaussian() * sigma;
-                double Q = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
+                double Q = 1 / (3 * Math.sqrt(2)) + noise;
                 //Iの誤り
                 if ((0 > I && I < -2 / (3 * Math.sqrt(2))) || I > 2 / (3 * Math.sqrt(2))) center += 1;//1ビット誤り
                 if (I <= -2 / (3 * Math.sqrt(2))) center += 2;//2ビット誤り
@@ -279,18 +279,19 @@ public class Main extends JFrame {
             //I:x軸、Q:Y軸 16の内4つ 8/16 = 1/2
             for (int i = 0; i < BIT_NUM / 2; i++) {
                 double noise = new Random().nextGaussian() * sigma;
-                double I = 1 / (3 * Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
+                double I = 1 / (3 * Math.sqrt(2)) + noise;
                 noise = new Random().nextGaussian() * sigma;
-                double Q = 1 / (Math.sqrt(2)) + noise;//2nπ以外にしないと復調がうまくいかない
+                double Q = 1 / Math.sqrt(2) + noise;
                 //Iの誤り
                 if ((0 > I && I < -2 / (3 * Math.sqrt(2))) || I > 2 / (3 * Math.sqrt(2))) edge += 1;//1ビット誤り
                 if (I <= -2 / (3 * Math.sqrt(2))) edge += 2;//2ビット誤り
                 //Qの誤り
                 if (0 <= Q && Q < 2 / (3 * Math.sqrt(2)) || Q < -2 / (3 * Math.sqrt(2))) edge += 1;//1ビット誤り
-                if (Q < 0 && Q >= -2 / (3 * Math.sqrt(2))) edge += 2;//2ビット誤り
+                if (Q < 0 && Q > -2 / (3 * Math.sqrt(2))) edge += 2;//2ビット誤り
 //                res = error / BIT_NUM;
             }
             res = (corner + center + edge) / (BIT_NUM * 4.0);
+
 
         }
     }
