@@ -23,8 +23,8 @@ import java.util.List;
  * Created by khrom on 2017/04/22.
  */
 public class Main extends JFrame {
-    private static int SN_RANGE = 30;//計算するDB数。この数だけスレッド生成する
-    private static double BIT_NUM = Math.pow(10, 6);
+    private static int SN_RANGE = 25;//計算するDB数。この数だけスレッド生成する
+    private static double BIT_NUM = Math.pow(10, 7);
     private static int FC = 50; //carrier freq
     private static double BPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1) * Math.PI);//r=1
     private static double QPSK = 1 * Math.cos(2 * Math.PI * FC * 0 + (1 / 4.0) * Math.PI);//r=1,象限で区切るためにπ/4だけずらしている。
@@ -56,48 +56,48 @@ public class Main extends JFrame {
         long start = System.currentTimeMillis();
 
 
-//        List<CalBPSK> calBPSKS = new ArrayList<>();
-//        for (int i = 0; i < SN_RANGE; i++) {
-//            calBPSKS.add(new CalBPSK(i));
-//            calBPSKS.get(i).start();
-//        }
-//        calBPSKS.forEach(s -> {
-//            try {
-//                s.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//        List<Double> dataList = new ArrayList<>();
-//        calBPSKS.forEach(s -> dataList.add(s.res));
-//
-//        main.createChart(dataList, "BPSK");
-        long end = System.currentTimeMillis();
-//        System.out.println("time" + (end - start) + "ms");
+        List<CalBPSK> calBPSKS = new ArrayList<>();
+        for (int i = 0; i < SN_RANGE; i++) {
+            calBPSKS.add(new CalBPSK(i));
+            calBPSKS.get(i).start();
+        }
+        calBPSKS.forEach(s -> {
+            try {
+                s.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
-////        //qpsk
-//        start = System.currentTimeMillis();
-//
-//        List<CalQPSK> calQPSKS = new ArrayList<>();
-//        for (int i = 0; i < SN_RANGE; i++) {
-//            calQPSKS.add(new CalQPSK(i));
-//            calQPSKS.get(i).start();
-//        }
-//        calQPSKS.forEach(s -> {
-//            try {
-//                s.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//        List<Double> dataLists = new ArrayList<>();
-//        calQPSKS.forEach(s -> dataLists.add(s.res));
-//
-//        main.createChart(dataLists, "QPSK");
-//        end = System.currentTimeMillis();
-//        System.out.println("time" + (end - start) + "ms");
+        List<Double> dataList = new ArrayList<>();
+        calBPSKS.forEach(s -> dataList.add(s.res));
+
+        main.createChart(dataList, "BPSK");
+        long end = System.currentTimeMillis();
+        System.out.println("time" + (end - start) + "ms");
+
+//        //qpsk
+        start = System.currentTimeMillis();
+
+        List<CalQPSK> calQPSKS = new ArrayList<>();
+        for (int i = 0; i < SN_RANGE; i++) {
+            calQPSKS.add(new CalQPSK(i));
+            calQPSKS.get(i).start();
+        }
+        calQPSKS.forEach(s -> {
+            try {
+                s.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        List<Double> dataLists = new ArrayList<>();
+        calQPSKS.forEach(s -> dataLists.add(s.res));
+
+        main.createChart(dataLists, "QPSK");
+        end = System.currentTimeMillis();
+        System.out.println("time" + (end - start) + "ms");
 
 //        //16qam
         start = System.currentTimeMillis();
