@@ -1,4 +1,4 @@
-2# tusinhentyo
+# tusinhentyo
 まだ作成中です！  
 参考にする際は注意してください  
 通信専攻科課題の変調をする課題作っています。  
@@ -6,7 +6,8 @@
 
 プロジェクト自体はintellijで管理しているのでintellijで起動すると必要ライブラリなどを自動でダウンロードしてきてくれます。  
 
-きっと[じょにお](https://twitter.com/joniojonijoni)がPython版を実装してくれるに違いない。
+~きっと[じょにお](https://twitter.com/joniojonijoni)がPython版を実装してくれるに違いない。~
+Y.Oが作成してくれました。ありがとうございます🙏
 
 # Python版との違い
 - 振幅を1に統一
